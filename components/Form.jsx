@@ -6,46 +6,20 @@ import Input from "./ui/input.jsx"
 import { Textarea } from "./ui/textarea"
 import { Button } from "./ui/button"
 import { NextResponse } from 'next/server.js'
+import toast from 'react-hot-toast'
 
 const Form = () => {
-//   const [formData, setFormData] = useState({ name: '', email: '', message: '' })
+
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [message, setMessage] = useState('')
-  const [responseMessage, setResponseMessage] = useState('')
 
-//   const handleChange = (e) => {
-//     const { value } = e.target;
-//     setName(value);
-//     setEmail(value);
-//     setMessage(value);
-//     console.log(name)
-//   };
-
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-    
-//     const data = await fetch('/api/', {
-//       method: 'POST',
-//       headers: {
-//         'Content-Type': 'application/json',
-//       },
-//       body: JSON.stringify({ name: 'Judee', email: 'ebukajudee302@gmail.com', message: 'Hey, i am Jude' }),
-//     });
-    
-//     const res = await data.json()
-//     console.log(res)
-//     setResponseMessage(res.message || 'Something went wrong');
-//     setName('')
-//     setEmail('')
-//     setMessage('')
-//   };
 
   const handleSubmit = async(e) => {
     e.preventDefault()
 
     try {
-      const response = await fetch('/api/', {
+      const response = await fetch('/api', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -53,17 +27,16 @@ const Form = () => {
         body: JSON.stringify({ name, email, message }),
       });
 
+      console.log(response.body)
+
       if (response.ok) {
-        const contentType = response.headers.get('content-type');
-        
-        if (contentType && contentType.includes('application/json')) {
-          const data = await response.json();
-          console.log(data); // Success
-        } else {
-          console.error('Response was not JSON');
-        }
+        const result = await response.json();
+        toast.success(`${result.message}, I have gotten your message and will reach out to you shortly, Thanks.`)
+        setName('')
+        setEmail('')
+        setMessage('')
       } else {
-        console.error('Failed to send request', response.status);
+        toast.error('Failed to send message:', 500);
       }
     } catch (error) {
       console.error('An error occurred:', error);

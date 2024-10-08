@@ -1,11 +1,10 @@
 import pkg from 'nodemailer';
 const nodemailer = pkg
-import toast from 'react-hot-toast';
 
-export default async function handler(req, res) {
-    console.log(req.method)
-    if (req.method === 'POST') {
-        const { name, email, message } = req.body;
+export async function POST(request) {
+    
+        const data = await request.json()
+        console.log(data)
 
         // Create Nodemailer transporter
         let transporter = nodemailer.createTransport({
@@ -20,21 +19,19 @@ export default async function handler(req, res) {
         });
 
         try {
+           
             await transporter.sendMail({
                 from: process.env.EMAIL_USER,
-                to: email, 
-                subject: "Eze Ebuka Jude - Web Developer", 
-                // text: `Hello ${name},\n\nWe have received your message: ${message}`, // plain text body
-                html: `<p>Hello ${name},</p><p>We have received your message:</p><blockquote>${message}</blockquote>`, 
+                to: process.env.EMAIL_USER, 
+                subject: `PortFolio Website Message from ${data?.email}`, 
+                html: `<p>Hi Jude, My name is ${data?.name},</p><p>Kindly find below the purpose for the message:</p><blockquote>${data?.message}</blockquote>`, 
             });
 
-            res.status(200).json({ message: 'Email sent successfully!' });
-            // toast.success('Email send Successfully')
+            console.log('Email sent Successfully')
+            return new Response(JSON.stringify({ message: 'Form submitted successfully' }), { status: 200 });
+            
         } catch (error) {
-            // toast.error('Error sending email:', error);
-            res.status(500).json({ message: 'Failed to send email', error });
+            console.log('Error sending email:', error);
+            return new Response(JSON.stringify({ message: 'Failed to send message' }), { status: 500 });
         }
-    } else {
-        res.status(405).json({ message: 'Method not allowed' });
-    }
 }

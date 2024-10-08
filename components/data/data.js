@@ -1,3 +1,5 @@
+'use client'
+
 import { Calendar, GraduationCap, HomeIcon, MailIcon, PhoneCall, User2 } from "lucide-react"
 
 export const projectData = [
